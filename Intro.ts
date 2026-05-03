@@ -95,6 +95,64 @@ let value : {} = "abc";
  value = undefined; // This will also cause a compile-time error because undefined is not an object
 */
 
+/* If we have no idea what could be in object and how many key and value pairs are present It's safer to use Record type as 
+it forces to use object as the type withe Key and values of specified type  */
+let RecordValue: Record<string, number | string>;
+RecordValue = { a: 1, b: "2", c: 3 };
+/* The Record type is a utility type in TypeScript that allows you to create an object type with a specific set of keys and values. 
+In this example, we are creating a Record type that has string keys and number or string values. 
+This means that the object can have any number of properties, as long as the keys are strings and the values are numbers or strings.
+*/
+
+/*
+Enum types allow you to define a set of named constants that can be used as values in your code.
+It's not part of JavaScript, but it can be compiled to JavaScript using TypeScript.
+*/
+enum Role{
+    Admin, // 0
+    User, // 1
+    Guest // 2
+}
+let userRole: Role;
+userRole = Role.Admin;
+userRole = 1; // This is also fine because the enum values are assigned numeric values starting from 0
+// userRole = "Admin"; // This will cause a compile-time error because userRole is of type Role and cannot be assigned a string value
+/* By default, the values of the enum are assigned numeric values starting from 0, so Admin is 0, User is 1, and Guest is 2.
+we can also assign custom values to the enum members if we want, for example:
+enum Role{
+    Admin = "ADMIN",
+    User = "USER",
+    Guest = "GUEST"
+}
+*/
+
+/* There is alternative for enums which are more useful: Literal Types */
+let userRoleLiteral: "Admin" = "Admin"; // This is a literal type that can only have the value "Admin"
+//userRoleLiteral = "User"; // This will cause a compile-time error because userRoleLiteral can only have the value "Admin"
+// We can also use union types to create a type that can have multiple literal values, for example:
+let userRoleLiteralUnion: "Admin" | "User" | "Guest";
+userRoleLiteralUnion = "Guest"; // This is fine
+/* userRoleLiteralUnion = "SuperAdmin"; // This will cause a compile-time error because userRoleLiteralUnion can only
+ have the values "Admin", "User", or "Guest". Literal types and union types can be more flexible and easier to work 
+ with than enums */
+let numberLiteral: 42 | 100 = 42; // This is a literal type that can only have the value 42 or 100
+
+/* Type aliases and custom types = this type we can create our own custom types using the type keyword */
+type UserRole = "Admin" | "User" | "Guest";
+let userRoleAlias: UserRole = "Admin";
+
+type User = {
+    name: string;
+    age: number;
+}
+let user1: User = { name: "John", age: 30 };
+/* Type aliases allow us to create our own custom types that can be reused throughout our code. 
+In this example, we are creating a type alias called UserRole that is a union of the literal types "Admin", "User", and "Guest". 
+We can then use this type alias to define the type of the userRoleAlias variable, which can only have the values "Admin", "User", or "Guest". 
+We are also creating a type alias called User that is an object type with name and age properties, and we can use this type alias to
+define the type of the user1 variable.
+*/
+
 function greet(name: string): string {
     return `Hello, ${name}!`;
 }
@@ -122,3 +180,144 @@ They are often used to indicate that a variable has not been initialized or that
 a = 9; // This will cause a compile-time error because a is of type null and cannot be assigned a number
 b = "undefined"; // This will also cause a compile-time error because b is of type undefined and cannot be assigned a string
 */
+
+/* Function as a value to another function */
+function PerformJob (job: () => void) { job(); }
+/* In this example, the PerformJob function takes another function as an argument and calls it. This allows for more flexible 
+and reusable code. () => void means a function that takes no arguments and returns void */
+
+function PerformJob1 (job: (m: string, n: number) => void) { job("Hello, world!", 202); }
+/* In this example, the PerformJob1 function takes another function as an argument that takes a string and a number as 
+parameters and returns void.*/
+
+function Printingmsg () {
+    console.log("This is a message from the Printingmsg function.");
+}
+PerformJob(Printingmsg); // This will call the Printingmsg function and print the message to the console
+
+function Printingmsg1 (message: string, number: number) {
+    console.log(`This is a message from the Printingmsg1 function: ${message} and number is ${number}.`);
+}
+
+PerformJob1(Printingmsg1); // This will call the Printingmsg1 function and print the message and number to the console
+
+/* This is also useful with objects and methods */
+type Job = {
+    performhttp: number;
+    perform: (message: string) => void;
+}
+
+let job: Job = {
+    performhttp: 200,
+    perform: (message: string) => {
+        console.log(`Performing job with message: ${message}`);
+    }
+}
+job.perform("This is a job message."); // This will call the perform method of the job object and print the message to the console
+
+
+/* Type Narrowing = not null and not undefined using ! and ? */
+function printLength(str: string | null) {
+    if (str) { // This is a type guard that checks if str is not null
+        console.log(`The length of the string is ${str.length}.`);
+    } else {
+        console.log("The string is null.");
+    }
+}
+printLength("Hello, world!");
+printLength(null);
+
+/* ? (optional / safe access): Used for optional properties/params and optional chaining.
+Optional property/parameter: age?: number means the property may be omitted (implicitly number | undefined).
+Optional chaining: user?.address?.city safely returns undefined if any part is null/undefined.
+
+! (non‑null / definite assignment): Tells the compiler a value is definitely present (bypasses strict null checks) or that 
+a property will be assigned later.
+Non‑null assertion: const len = name!.length — assert name is not null/undefined.
+Definite assignment assertion: class C { value!: number } — value will be assigned before use.
+Note: Prefer narrowing and runtime checks; avoid ! when it can mask real null/undefined bugs.
+ */
+function printLength1(str: string | null) {
+    console.log(`The length of the string is ${str!.length}.`);
+}
+printLength1("Hello, world!");
+printLength1(null);
+
+function printLength2(str: string | null) {
+    console.log(`The length of the string is ${str?.length}.`);
+}
+printLength2("Hello, world!");
+printLength2(null);
+
+
+/* Type Casting = Type assertion allows you to tell the compiler to treat a value as a different type.
+Syntax: value as Type */
+let someValue: any = "This is a string.";
+let strLength: number = (someValue as string).length; // This is fine, we are telling the compiler to treat someValue
+//  as a string and get its length
+// let strLength1: number = someValue.length; // This will cause a compile-time error because someValue is of type any and 
+// the compiler cannot infer that it has a length property
+
+
+/* Unknown Type :- Unknown type is a type that represents any value but not totally. It is the type-safe alternative to 
+the any type. */
+let unknownValue: unknown;
+unknownValue = "This is a string.";
+/* let strLength2: number = unknownValue.length; // This will cause a compile-time error because unknownValue is of type unknown
+ and the compiler cannot infer that it has a length property
+ We need to use type assertion or type narrowing to access the properties of an unknown type
+if (typeof unknownValue === "string") {
+    let strLength2: number = unknownValue.length; // This is fine, we are using type narrowing to check if unknownValue 
+    // is a string before accessing its length property
+}
+This is a safer way to work with unknown types because it ensures that we are only accessing properties that are 
+valid for the actual type of the value.
+*/
+
+function isString(value: unknown) : void {
+   // value.log(); // This will cause a compile-time error because value is of type unknown and the compiler cannot infer that it has a log method
+    if (typeof value === "object" && value !== null && "log" in value && typeof value.log === "function") {
+        value.log(); // This is fine, we are using type narrowing to check if value is an object that has a log method before calling it
+    } else {
+        console.log("The value is not a string.");
+    }
+}
+
+function isString1(value: any) : void {
+    value.log(); // This is fine, but it can lead to runtime errors if value does not have a log method
+}
+
+/* Optional with ? */
+function printMessage(message?: string) {
+    if (message) {
+        console.log(`The message is: ${message}`);
+    } else {
+        console.log("No message provided.");
+    }
+}
+/* This defines a function printMessage that takes an optional parameter message of type string. */
+printMessage("Hello, world!"); // This will print "The message is: Hello, world!"
+printMessage(); // This will print "No message provided." because we are not passing any argument for the message parameter
+
+type UserWithOptional = {
+    name: string;
+    age?: number; // This is an optional property, it may be omitted
+}
+let userWithOptional: UserWithOptional = { name: "John" }; // This is fine, we are omitting the age property because it is optional
+userWithOptional = { name: "John", age: 30 }; // This is also fine, we are providing a value for the age property
+
+/* Null Coalescing */
+let value1: string | null = null;
+let defaultValue: string = "Default Value";
+let result1: string = value1 || defaultValue; // result1 will be "Default Value" because value1 is null 
+/* The || operator is the logical OR operator, it returns the first truthy value it encounters. 
+In this case, since value1 is null or undefined or '' or 0 or false (which is falsy), it will return defaultValue, 
+which is "Default Value". This can lead to unintended consequences if you want to allow empty strings as valid values. */
+console.log(result1);
+let result: string = value1 ?? defaultValue; // result will be "Default Value" because value1 is null
+/* The ?? operator is the nullish coalescing operator, it returns the right-hand side operand when the left-hand side operand 
+is null or undefined, and otherwise returns the left-hand side operand.
+This operator is useful when you want to provide a default value for null or undefined, but still allow other falsy values 
+like empty strings or 0 to be treated as valid.
+*/
+console.log(result);
