@@ -11,7 +11,7 @@
     "target": "es2022",
     "types": [],
     // For nodejs:
-    // "lib": ["es2022"],
+     "lib": ["dom", "ES2022", "DOM.Iterable", "ScriptHost"],
     // "types": ["node"],
     // and npm install -D @types/node
 
