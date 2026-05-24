@@ -91,3 +91,18 @@ The syntax { name: personName } means that we are extracting the 'name' property
  assigning it to a new variable called 'personName'. This allows us to use more descriptive variable 
  names while still accessing the properties of the original object. */
  console.log(personName); // Output: Charlie
+
+ // IMPORTANT NOTE
+ // In JavaScript, the const keyword is used to declare variables that cannot be reassigned. 
+ // However, it does not make the variable itself immutable. If the variable is an object or an array, 
+ // you can still modify its properties or elements even if it is declared with const. The const declaration 
+ // only prevents reassignment of the variable itself, not the contents of the variable.
+ const user = {name:"John"};
+user.name = "Doe"; // ✅ allowed 
+
+//Implicit Return Types
+const multiply = (a: number, b: number) => a * b;
+// In this example, the function 'multiply' implicitly returns the result of the expression 'a * b'.
+// The return type of the function is inferred by TypeScript based on the expression, so we don't need to 
+// explicitly specify it. 
+console.log(multiply(2, 3)); // Output: 6
